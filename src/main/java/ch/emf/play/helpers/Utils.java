@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +145,34 @@ public class Utils {
   public static Result toJson(boolean ok, String message) {
     BooleanResult bResult = new BooleanResult(ok, message);
     return ok(Json.toJson(bResult)).as("application/json");
+  }
+
+  /**
+   * Transforme un objet quelconque en XML.
+   *
+   * @param object un objet à transformer en XML
+   * @param objects [0]=aliasName, [1]aliasClass
+   * @return un résultat HTTP avec du XML
+   */
+  public static Result toXml(Object object, Object... objects) {
+    XStream xstream = new XStream();
+
+    // ajout d'un alias éventuel pour une classe donnée
+    if (objects.length >= 2) {
+      xstream.alias((String) objects[0], (Class) objects[1]);
+    }
+
+    // présentation des dates en ISO
+    String dateFormat = "yyyy-MM-dd";
+    String[] acceptableFormats = {dateFormat};
+    xstream.registerConverter(new DateConverter(dateFormat, acceptableFormats));
+
+//    xstream.setMode(XStream.SINGLE_NODE_XPATH_RELATIVE_REFERENCES);
+//    xstream.setMode(XStream.SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES);
+//    xstream.setMode(XStream.ID_REFERENCES);
+//    xstream.omitField(Compta.class, "login");
+    xstream.setMode(XStream.NO_REFERENCES);
+    return ok(xstream.toXML(object)).as("application/xml");
   }
 
   /**

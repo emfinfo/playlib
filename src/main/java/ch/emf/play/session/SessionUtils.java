@@ -53,7 +53,7 @@ public class SessionUtils {
   public static void clear() {
     String name = getUserName();
     session().clear();
-    if (!name.equals("?name?")) {
+    if (!name.equals("?")) {
       Logger.info("SESSION CLEAR (" + name + ")");
     }
   }
@@ -152,7 +152,7 @@ public class SessionUtils {
   public static String getUserName() {
     String name = session().get(SESSION_USER_NAME);
     if (name == null || name.isEmpty()) {
-      name = "?name?";
+      name = "?";
     }
     return name;
   }
@@ -175,7 +175,7 @@ public class SessionUtils {
   public static String getUserProfile() {
     String profile = session().get(SESSION_USER_PROFILE);
     if (profile == null || profile.isEmpty()) {
-      profile = "?profil?";
+      profile = "?";
     }
     return profile;
   }
@@ -235,10 +235,10 @@ public class SessionUtils {
    * Dans une approche multi-tenants où l'user-id et le db-id forment un
    * tenant, cette méthode permet de préciser l'identifiant de la db.
    *
-   * @param comptaId un identifiant numérique
+   * @param dbId un identifiant numérique de la base de données
    */
-  public static void setDbId(int comptaId) {
-    session(SESSION_DB_ID, "" + comptaId);
+  public static void setDbId(int dbId) {
+    session(SESSION_DB_ID, "" + dbId);
   }
 
 
