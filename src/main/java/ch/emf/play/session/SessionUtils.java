@@ -12,6 +12,7 @@ public class SessionUtils {
   public final static String SESSION_USER_ID = "user-id";
   public final static String SESSION_USER_NAME = "user-name";
   public final static String SESSION_USER_PROFILE = "user-profile";
+  public final static String SESSION_USER_PERSON_ID = "user-person-id";
   public final static String SESSION_TIMESTAMP = "timestamp";
 
   public final static String SESSION_LANG = "fr";
@@ -115,11 +116,13 @@ public class SessionUtils {
    * @param userId l'identifiant de login
    * @param userName le nom de login
    * @param userProfile le profil de login
+   * @param userPersonId l'identifiant de la personne loguée ou 0 si pas de gestion de personnes
    */
-  public static void saveUserInfo(int userId, String userName, String userProfile) {
+  public static void saveUserInfo(int userId, String userName, String userProfile, int userPersonId) {
     session(SESSION_USER_ID, "" + userId);
     session(SESSION_USER_NAME, userName);
     session(SESSION_USER_PROFILE, userProfile);
+    session(SESSION_USER_PERSON_ID, "" + userPersonId);
     session(SESSION_TIMESTAMP, "" + System.currentTimeMillis());
   }
 
@@ -189,7 +192,25 @@ public class SessionUtils {
     session(SESSION_USER_PROFILE, profile);
   }
 
+   /**
+   * Récupérer l'indetifiant (pk) de la personne loguée.
+   *
+   * @return l'identifiant de la personne loguée ou 0 si non trouvé
+   */
+  public static int getUserPersonneId() {
+    String userId = session().get(SESSION_USER_PERSON_ID);
+    return stringToInt(userId);
+  }
 
+  /**
+   * Mémoriser l'identifiant (pk) de la personne loguée.
+   *
+   * @param userPersonId un identifiant (pk) de la personne loguée
+   */
+  public static void setUserPersonId(int userPersonId) {
+    session(SESSION_USER_PERSON_ID, "" + userPersonId);
+  }
+  
   /**
    * Récupérer la langue mémorisée pour la session. Ce n'est pas forcément
    * la langue de l'utilisateur, mais une langue choisie côté client ou la
