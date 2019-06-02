@@ -259,9 +259,11 @@ public class Utils {
 //    if (origin != null && whiteList.contains(origin)) {
     boolean ok = origin.isPresent()
       && (origin.get().contains("localhost")
+      || origin.get().contains("127.0.0.1")
+      || origin.get().contains("vps617676.ovh.net")
       || origin.get().contains("192.168")
       || origin.get().contains("emf-informatique.ch")
-      || origin.get().contains("homepage.hispeed.ch"));
+      || origin.get().contains("homepage.hispeed.ch")); 
 //    System.out.println("  >>> validCrossDomainContext origin: " + origin + ", ok:" + ok);
     if (ok) {
       response.setHeader("Access-Control-Allow-Origin", origin.get());
