@@ -5,7 +5,7 @@
   <!-- the basics -->
   <groupId>ch.emf.info</groupId>
   <artifactId>playlib</artifactId>
-  <version>1.0.3</version> 
+  <version>1.1.0</version> 
   <packaging>jar</packaging>
 
   <name>PlayLib</name>
@@ -24,8 +24,17 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <play2.version>2.6.20</play2.version>
+    <play2.version>2.7.3</play2.version>
   </properties>
+  
+  <!-- additional repository -->
+  <repositories>
+    <repository>
+      <id>emfinfo</id>
+      <name>emfinfo.github.io</name>
+      <url>http://emfinfo.github.io/javalibs/releases</url>
+    </repository>
+  </repositories>
 
   <!-- dependencies -->
   <dependencies>
@@ -36,7 +45,19 @@
       <artifactId>play_2.12</artifactId>
       <version>${play2.version}</version>
     </dependency>
-
+    
+    <dependency>
+      <groupId>ch.emf.info</groupId>
+      <artifactId>cypherlib</artifactId>
+      <version>1.1.0</version>
+    </dependency>    
+    
+<!--    <dependency>
+      <groupId>ch.emf.info</groupId>
+      <artifactId>daolayer</artifactId>
+      <version>6.1.0</version>
+    </dependency>    -->
+    
     <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
