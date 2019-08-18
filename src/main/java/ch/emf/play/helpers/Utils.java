@@ -1,6 +1,5 @@
 package ch.emf.play.helpers;
 
-import ch.emf.play.session.SessionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,36 +11,47 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import play.Logger;
 import play.i18n.Lang;
 import play.i18n.MessagesApi;
 import play.libs.Json;
-import play.mvc.Http.Context;
 import play.mvc.Http.Request;
-import play.mvc.Http.Response;
 import play.mvc.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import play.mvc.Http;
 import static play.mvc.Results.badRequest;
 import static play.mvc.Results.internalServerError;
 import static play.mvc.Results.ok;
 
 /**
- * Méthodes statiques d'aide pour les contrôleursde Play framework.
+ * Méthodes statiques d'aide pour les contrôleurs de Play framework.
  *
  * @author jcstritt
  */
 public class Utils {
 
+  // nouvelle façon d'utiliser un logger (JCS / 8.8.2019)
+  static Logger logger = LoggerFactory.getLogger(Utils.class);
+  
+  /*
+   * METHODES POUR GERER LES MESSAGES DE LOG
+   */
+  
   /**
    * Permet d'afficher des informations de log dans la console.
    *
-   * @param ctx le contexte HTTP
+   * @param req un objet représentant une requête HTTP
    */
-  public static void logInfo(Context ctx) {
-
+  public static void logInfo(Http.Request req) {
+    String name = SessionUtils.getUserName(req);
+    
     // route
-    String route = ctx.toString();
-    route = route.substring(route.indexOf("(") + 1, route.indexOf(")"));
-    if (route.contains("login/")) {
+    String route = req.path();
+//    route = route.substring(route.indexOf("(") + 1, route.indexOf(")"));
+
+    if (route.contains("/session/login")) {
+      String data = route.substring(route.lastIndexOf("/")+1);
+      name = ch.emf.cypher.helpers.Utils.extractName(data);
       route = route.substring(0, route.lastIndexOf("/"));
     }
     int p = route.indexOf("?_=");
@@ -49,19 +59,14 @@ public class Utils {
       route = route.substring(0, p);
     }
     if (!route.endsWith("/")) {
-      String msg = route;
-      String name = SessionUtils.getUserName();
-      if (!name.equalsIgnoreCase("?name?")) {
-        msg += " (" + name + ")";
-      }
+      String msg = route + " (" + name + ")";
 
       // elapsed time
-      String ts = ctx.response().getHeaders().get("logtimestamp");
-      long startTime = (ts == null) ? System.currentTimeMillis() : Long.parseLong(ts);
+      long startTime = Long.parseLong(req.header("x-log-timestamp").orElse("" + System.currentTimeMillis()));
       if (startTime >= 0) {
         msg += ", " + (System.currentTimeMillis() - startTime) + " ms";
       }
-      Logger.info(msg);
+      logger.info(msg);
     }
   }
 
@@ -73,16 +78,15 @@ public class Utils {
    * @return un résultat de type "bad request"
    */
   public static Result logError(Exception ex) {
-    Logger.error(ex.getLocalizedMessage());
+    logger.error(ex.getLocalizedMessage());
     return badRequest(ex.getLocalizedMessage());
   }
 
-
-
+  
   /*
    * METHODES DE CONVERSION JSON ET AUTRES
    */
-
+  
   /**
    * Transforme un objet quelconque en JSON.
    *
@@ -150,7 +154,7 @@ public class Utils {
   /**
    * Transforme un objet quelconque en XML.
    *
-   * @param object un objet à transformer en XML
+   * @param object  un objet à transformer en XML
    * @param objects [0]=aliasName, [1]aliasClass
    * @return un résultat HTTP avec du XML
    */
@@ -179,7 +183,7 @@ public class Utils {
    * Convertit un objet JSON en String.
    *
    * @param node un noeud JSON
-   * @param prop le nom d'une propriété à extraire
+   * @param prop le nom d'une propriété à extractName
    *
    * @return un string avec le contenu de la propriété
    */
@@ -214,11 +218,11 @@ public class Utils {
     }
     return result;
   }
-
+  
   /**
    * Trnsforme un objet JSON stringifié en objet Java.
    *
-   * @param <T> le type de la réponse
+   * @param <T>  le type de la réponse
    * @param json on objet JSON stringifié à transformer en objet Java
    * @param type le type de référence pour T
    * @return un objet d'après la requête HTTP fournie
@@ -235,27 +239,20 @@ public class Utils {
     return result;
   }
 
-
-
+  
   /*
    * CROSS DOMAIN VALIDATION
    */
-
+  
   /**
    * Valide le contexte "cross-domain" d'une requête.
    *
-   * @param request  une requête HTTP
-   * @param response une réponse HTTP
+   * @param request une requête HTTP
+   * @param result  le résultat de la requête HTTP
    */
-  public static void validCrossDomainContext(Request request, Response response) {
-//    Set<String> whiteList = Sets.newHashSet(
-//            "http://localhost:8383",
-//            "http://localhost:9000",
-//            "http://192.168.0.4:9000",
-//            "http://192.168.0.5:9000",
-//            "http://jcstritt.emf-informatique.ch",
-//            "http://homepage.hispeed.ch");
+  public static void validCrossDomainRequest(Http.Request request, Result result) {
     Optional<String> origin = request.header("Origin");
+//    Set<String> whiteList = Sets.newHashSet();
 //    if (origin != null && whiteList.contains(origin)) {
     boolean ok = origin.isPresent()
       && (origin.get().contains("localhost")
@@ -263,41 +260,32 @@ public class Utils {
       || origin.get().contains("vps617676.ovh.net")
       || origin.get().contains("192.168")
       || origin.get().contains("emf-informatique.ch")
-      || origin.get().contains("homepage.hispeed.ch")); 
-//    System.out.println("  >>> validCrossDomainContext origin: " + origin + ", ok:" + ok);
+      || origin.get().contains("homepage.hispeed.ch"));
     if (ok) {
-      response.setHeader("Access-Control-Allow-Origin", origin.get());
-      response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
-      response.setHeader("Access-Control-Allow-Credentials", "true");
-      response.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type");
+      result.withHeader("Access-Control-Allow-Origin", origin.get());
+      result.withHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
+      result.withHeader("Access-Control-Allow-Credentials", "true");
+      result.withHeader("Access-Control-Allow-Headers", "Origin, Content-Type");
     }
+//    System.out.println("  >>> validCrossDomainContext origin: " + origin + ", ok:" + ok);
   }
 
-  /**
-   * Valide le contexte "cross-domain" d'une requête.
-   *
-   * @param ctx le contexte HTTP
-   */
-  public static void validCrossDomainContext(Context ctx) {
-    validCrossDomainContext(ctx.request(), ctx.response());
-  }
-
-
+  
   /*
    * MESSAGES
    */
-  public static String getMessage(MessagesApi messagesApi, String key) {
-    String sessionLang = SessionUtils.getLang();
+  public static String getMessage(Http.Request req, MessagesApi messagesApi, String key) {
+    String sessionLang = SessionUtils.getLang(req);
     Lang lang = new Lang(Lang.forCode(sessionLang));
     return messagesApi.get(lang, key);
   }
 
-  public static List<String> getMessagesList(MessagesApi messagesApi, String key) {
+  public static List<String> getMessagesList(Http.Request req, MessagesApi messagesApi, String key) {
     List<String> messages = new ArrayList<>();
     String oneMsg;
     int i = 0;
     do {
-      oneMsg = getMessage(messagesApi, key + i);
+      oneMsg = getMessage(req, messagesApi, key + i);
       if (!oneMsg.isEmpty()) {
         messages.add(oneMsg);
       }
@@ -306,13 +294,13 @@ public class Utils {
     return messages;
   }
 
-  public static String[] getMessagesArray(MessagesApi messagesApi, String key) {
-    List<String> messages = getMessagesList(messagesApi, key);
+  public static String[] getMessagesArray(Http.Request req, MessagesApi messagesApi, String key) {
+    List<String> messages = getMessagesList(req, messagesApi, key);
     return (String[]) messages.toArray();
   }
 
-  public static String[] getMessagesArray(MessagesApi messagesApi, String key, String regex) {
-    String messages[] = getMessage(messagesApi, key).split(regex);
+  public static String[] getMessagesArray(Http.Request req, MessagesApi messagesApi, String key, String regex) {
+    String messages[] = getMessage(req, messagesApi, key).split(regex);
     return messages;
   }
 }
