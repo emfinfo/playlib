@@ -32,23 +32,26 @@ public class Utils {
 
   // nouvelle façon d'utiliser un logger (JCS / 8.8.2019)
   static Logger logger = LoggerFactory.getLogger(Utils.class);
+
+  
   
   /*
-   * METHODES POUR GERER LES MESSAGES DE LOG
+   *  METHODES D'AFFIChAGE DANS LE FICHIER DE LOG 
    */
   
   /**
    * Permet d'afficher des informations de log dans la console.
    *
    * @param req un objet représentant une requête HTTP
+   * @param timestamp un timestamp en [ms] depuis le départ d'une requête
    */
-  public static void logInfo(Http.Request req) {
-    String name = SessionUtils.getUserName(req);
+  public static void logInfo(Http.Request req, long timestamp) {
     
-    // route
+    // on récupère le nom de la personne loguée et la route demandée
+    String name = SessionUtils.getUserName(req);
     String route = req.path();
-//    route = route.substring(route.indexOf("(") + 1, route.indexOf(")"));
 
+    // si c'est un login, il faut extraire le nom depuis des données encryptées    
     if (route.contains("/session/login")) {
       String data = route.substring(route.lastIndexOf("/")+1);
       name = ch.emf.cypher.helpers.Utils.extractName(data);
@@ -58,13 +61,16 @@ public class Utils {
     if (p >= 0) {
       route = route.substring(0, p);
     }
+    
+    // si ce n'est pas la page d'accuei, on affiche le résultat
     if (!route.endsWith("/")) {
+      
+      // on ajoute le nom de la personne loguée après la route
       String msg = route + " (" + name + ")";
 
-      // elapsed time
-      long startTime = Long.parseLong(req.header("x-log-timestamp").orElse("" + System.currentTimeMillis()));
-      if (startTime >= 0) {
-        msg += ", " + (System.currentTimeMillis() - startTime) + " ms";
+      // on calcule le temps écoulé pour la requête terminée
+      if (timestamp >= 0) {
+        msg += ", " + (System.currentTimeMillis() - timestamp) + " ms";
       }
       logger.info(msg);
     }
@@ -240,8 +246,9 @@ public class Utils {
   }
 
   
+  
   /*
-   * CROSS DOMAIN VALIDATION
+   * VALDATION CROSS-DOMAINE
    */
   
   /**
@@ -269,7 +276,8 @@ public class Utils {
     }
 //    System.out.println("  >>> validCrossDomainContext origin: " + origin + ", ok:" + ok);
   }
-
+  
+  
   
   /*
    * MESSAGES

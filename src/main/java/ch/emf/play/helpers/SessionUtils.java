@@ -28,7 +28,7 @@ public class SessionUtils {
    * @return true si la session est ouverte
    */
   public static boolean isOpen(Http.Request req) {
-    return req.session().getOptional(SESSION_USER_ID).isPresent();
+    return req.session().get(SESSION_USER_ID).isPresent();
   }
 
   /**
@@ -40,10 +40,10 @@ public class SessionUtils {
    */
   public static boolean isTimeout(Http.Request req, int msTimeout) {
     boolean timeout = false;
-    Optional<String> timestamp = req.session().getOptional(SESSION_TIMESTAMP);
+    Optional<String> timestamp = req.session().get(SESSION_TIMESTAMP);
     if (isOpen(req) && timestamp.isPresent()) {
       long cTime = System.currentTimeMillis();
-      long sTime = Long.parseLong(req.session().getOptional(SESSION_TIMESTAMP).orElse("0"));
+      long sTime = Long.parseLong(req.session().get(SESSION_TIMESTAMP).orElse("0"));
       timeout = (cTime - sTime) >= msTimeout;
 //      System.out.println("cTime: " + cTime + " sTime: " + sTime + " diff: " + (cTime - sTime) + ", timeout: " + timeout);
     }
@@ -78,7 +78,7 @@ public class SessionUtils {
    * @return l'identifiant de la personne loguée ou 0 si non trouvé
    */
   public static int getUserId(Http.Request req) {
-    String userId = req.session().getOptional(SESSION_USER_ID).orElse("0");
+    String userId = req.session().get(SESSION_USER_ID).orElse("0");
     return Integer.parseInt(userId);
   }
   
@@ -89,7 +89,7 @@ public class SessionUtils {
    * @return l'identifiant de la personne loguée
    */
   public static Optional<String> getOptionalUserId(Http.Request req) {
-    return req.session().getOptional(SESSION_USER_ID);
+    return req.session().get(SESSION_USER_ID);
   }
 
   /**
@@ -99,7 +99,7 @@ public class SessionUtils {
    * @return le nom de l'utilisateur logué ou "?" si pas trouvé
    */
   public static String getUserName(Http.Request req) {
-    return req.session().getOptional(SESSION_USER_NAME).orElse("?");
+    return req.session().get(SESSION_USER_NAME).orElse("?");
   }
 
   /**
@@ -109,7 +109,7 @@ public class SessionUtils {
    * @return le profil de l'utilisateur logué ou "?" si pas trouvé
    */
   public static String getUserProfile(Http.Request req) {
-    return req.session().getOptional(SESSION_USER_PROFILE).orElse("?");
+    return req.session().get(SESSION_USER_PROFILE).orElse("?");
   }
 
   /**
@@ -119,7 +119,7 @@ public class SessionUtils {
    * @return l'identifiant de la personne loguée ou 0 si pas trouvé
    */
   public static int getUserPersonId(Http.Request req) {
-    String personId = req.session().getOptional(SESSION_USER_PERSON_ID).orElse("0");
+    String personId = req.session().get(SESSION_USER_PERSON_ID).orElse("0");
     return Integer.parseInt(personId);
   }
 
@@ -134,7 +134,7 @@ public class SessionUtils {
    * @return une langue sur 2 caractères
    */
   public static String getLang(Http.Request req) {
-    return req.session().getOptional(SESSION_LANG).orElse("fr");
+    return req.session().get(SESSION_LANG).orElse("fr");
   }
 
   /**
@@ -145,7 +145,7 @@ public class SessionUtils {
    * @return l'identifiant de la db en cours ou 0 si non trouvé
    */
   public static int getDbId(Http.Request req) {
-    String tenantId = req.session().getOptional(SESSION_DB_ID).orElse("0");
+    String tenantId = req.session().get(SESSION_DB_ID).orElse("0");
     return Integer.parseInt(tenantId);
   }
 
