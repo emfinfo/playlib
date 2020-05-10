@@ -1,4 +1,4 @@
-package ch.jcsinfo.play.helpers;
+package ch.jcsinfo.play.models;
 
 /**
  * Un modèle de données pour un retour Play framework de type boolean.
