@@ -1,4 +1,4 @@
-package ch.emf.play.models;
+package ch.jcsinfo.play.models;
 
 /**
  * Permet de mémoriser les informations sur les données d'une release de l'application.

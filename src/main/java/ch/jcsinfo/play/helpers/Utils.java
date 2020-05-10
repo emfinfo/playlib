@@ -1,4 +1,4 @@
-package ch.emf.play.helpers;
+package ch.jcsinfo.play.helpers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -54,7 +54,7 @@ public class Utils {
     // si c'est un login, il faut extraire le nom depuis des données encryptées    
     if (route.contains("/session/login")) {
       String data = route.substring(route.lastIndexOf("/")+1);
-      name = ch.emf.cypher.helpers.Utils.extractName(data);
+      name = ch.jcsinfo.cypher.AesUtil.extractName(data);
       route = route.substring(0, route.lastIndexOf("/"));
     }
     int p = route.indexOf("?_=");

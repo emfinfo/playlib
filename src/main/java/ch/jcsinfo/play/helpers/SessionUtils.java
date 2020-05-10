@@ -1,4 +1,4 @@
-package ch.emf.play.helpers;
+package ch.jcsinfo.play.helpers;
 
 import java.util.HashMap;
 import java.util.Map;
