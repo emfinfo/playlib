@@ -1,5 +1,6 @@
 package ch.jcsinfo.play.helpers;
 
+import ch.jcsinfo.play.models.BooleanResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
