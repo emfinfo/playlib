@@ -2,29 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- the basics -->
-  <groupId>ch.jcsinfo.libs</groupId>
-  <artifactId>playlib</artifactId>
-  <version>2.8.2</version>
-  <packaging>jar</packaging>
-
+  <!-- project information -->
   <name>PlayLib</name>
   <description>A small library with static methods for the Play framework.</description>
-  <url>https://github.com/emfinfo/playdao</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/MIT</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+  <url>https://github.com/emfinfo/playlib</url>
+
+  <!-- project organization -->
+  <organization>
+    <name>JCSINFO</name>
+    <url>https://www.jcsinfo.ch</url>
+  </organization>
+
+   <!-- project build information -->
+  <groupId>ch.jcsinfo.libs</groupId>
+  <artifactId>playlib</artifactId>
+  <version>2.8.3</version>
+  <packaging>jar</packaging>
 
   <!-- maven project properties -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <play2.version>2.8.2</play2.version>
   </properties>
   
   <!-- additional repository -->
@@ -39,48 +38,37 @@
   <!-- dependencies -->
   <dependencies>
 
-    <!-- dependencies for compile (and run) -->
     <dependency>
       <groupId>com.typesafe.play</groupId>
       <artifactId>play_2.13</artifactId>
-      <version>${play2.version}</version>
+      <version>2.8.3</version> <!-- october 2020 -->
     </dependency>
     
     <dependency>
       <groupId>ch.jcsinfo.libs</groupId>
       <artifactId>cypherlib</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2</version> <!-- november 2020 -->
     </dependency>    
     
     <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.4.12</version>
+      <version>1.4.13</version> <!-- september 2020 -->
     </dependency>
 
-    <!-- dependencies for tests -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
 
   </dependencies>
 
-  <!-- build settings -->
+  <!-- build plugins -->
   <build>
     <plugins>
-<!--      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>       
-          <source>8</source>
-          <target>8</target>
-        </configuration>
-      </plugin>  -->
       
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
@@ -89,7 +77,7 @@
 
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.1.1</version> 
+        <version>3.2.0</version> 
       </plugin>
 
       <plugin>
@@ -124,33 +112,41 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.9.0</version>
+        <version>3.9.1</version>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>        
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.0.0</version>
-        <configuration>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-        </configuration>
-      </plugin>           
 
     </plugins>
   </build>
 
-  <!-- create javadoc -->
+   <!-- HTML reporting with "mvn site" -->
   <reporting>
     <plugins>
+      
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.1.1</version> 
-        <configuration>
-          <source>1.8</source>
-        </configuration>            
+        <version>3.2.0</version> 
       </plugin>
+      
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+          <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+        </configuration>        
+      </plugin>         
+      
     </plugins>
   </reporting>
+  
+  <!-- licenses -->
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>  
 
   <!-- developers -->
   <developers>
@@ -158,7 +154,6 @@
       <id>STT</id>
       <name>Jean-Claude Stritt</name>
       <email>jcsinfo@hispeed.ch</email>
-      <url>https://www.jcsinfo.ch/</url>
       <organization>JCSINFO</organization>
       <organizationUrl>https://www.jcsinfo.ch</organizationUrl>
       <roles>
