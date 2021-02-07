@@ -1,10 +1,13 @@
-# playlib 2.8.3 - november 2020
+# playlib 2.8.7 - february 2021
 A small library to help use of Play framework with session and return of results.
 
 You can download and open this project in NetBeans 8.x to 11.x. It's a Java 8 maven project. So, dependencies are loaded automaticly from maven central.
 
 Project documentation here :<br>
     http://www.jcsinfo.ch/doc/playlib<br>
+
+New in release 2.8.7 (07.02.2021) :
+* Adapted to Play 2.8.7
 
 New in release 2.8.3 (03.11.2020) :
 * Adapted to Play 2.8.3
