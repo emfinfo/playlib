@@ -54,9 +54,9 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.4.13</version> <!-- september 2020 -->
+      <version>1.4.18</version> <!-- november 2021 -->
     </dependency>
-
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
